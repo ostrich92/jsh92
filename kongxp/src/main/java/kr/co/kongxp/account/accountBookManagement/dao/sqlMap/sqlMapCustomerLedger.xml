@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper  namespace="kr.co.kongxp.account.accountBookManagement.dao.CustomerLedgerDAO">
+    
+	<resultMap type="customerLedgerTO" id="customerLedgerResult">
+		<result property="customerCode" column="CUSTOMER_CODE"/>
+		<result property="customerName" column="CUSTOMER_NAME"/>
+		<result property="price" column="PRICE"/>
+		<result property="leftDebtorPrice" column="LEFT_DEBTOR_PRICE"/>
+		<result property="rightCreditsPrice" column="RIGHT_CREDITS_PRICE"/>
+		<result property="totalPrice" column="TOTAL_PRICE"/>
+	</resultMap>
+
+	<select id="getCustomerLedgerInfo" resultMap="customerLedgerResult" parameterType="map">
+		SELECT 
+		J.CUSTOMER_CODE 
+		, J.CUSTOMER_NAME 
+		, NVL(A,0) AS PRICE
+		, NVL(SUM(J.LEFT_DEBTOR_PRICE),0) AS LEFT_DEBTOR_PRICE
+		, NVL(SUM(J.RIGHT_CREDITS_PRICE),0) AS RIGHT_CREDITS_PRICE
+		, NVL(T.A+NVL(SUM(J.LEFT_DEBTOR_PRICE),0)-NVL(SUM(J.RIGHT_CREDITS_PRICE),0),0) AS TOTAL_PRICE
+		FROM JOURNAL J
+		, SLIP S 
+		, (SELECT (NVL(SUM(J.LEFT_DEBTOR_PRICE),0)-NVL(SUM(J.RIGHT_CREDITS_PRICE),0)) AS A 
+			FROM JOURNAL J
+				, SLIP S
+			WHERE J.CUSTOMER_CODE=#{customerCode}
+				AND J.SLIP_NO=S.SLIP_NO
+				AND J.ACCOUNT_INNER_CODE = #{accountCode}
+				AND S.APPROVAL_DATE BETWEEN '2018-01-01' AND LAST_DAY(ADD_MONTHS(#{startDate},-1)))T
+		WHERE J.CUSTOMER_CODE=#{customerCode}
+		AND J.SLIP_NO=S.SLIP_NO
+		AND J.ACCOUNT_INNER_CODE = #{accountCode}
+		AND S.APPROVAL_DATE BETWEEN #{startDate} AND #{endDate}
+		GROUP BY CUSTOMER_CODE , CUSTOMER_NAME, A
+	</select>
+	
+		
+	
+	<resultMap type="customerLedgerDetailTO" id="customerLedgerDetailResult">
+		<result property="slipApprovalDate" column="SLIP_APPROVAL_DATE"/>
+		<result property="customerCode" column="CUSTOMER_CODE"/>
+		<result property="customerName" column="CUSTOMER_NAME"/>
+		<result property="lPrice" column="L_price"/>
+		<result property="Rprice" column="R_price"/>
+		<result property="balance" column="balance"/>
+	</resultMap>
+		
+	<select id="getCustomerLedgerDetailInfo" resultMap="customerLedgerDetailResult" parameterType="map">		
+		WITH 
+		LAST_MONTH_INFO AS (
+		SELECT NVL(SUM(J.LEFT_DEBTOR_PRICE),0) AS L_price
+		, NVL(SUM(J.RIGHT_CREDITS_PRICE),0) AS R_price
+		, (NVL(SUM(J.LEFT_DEBTOR_PRICE),0) - NVL(SUM(J.RIGHT_CREDITS_PRICE),0)) AS balance
+		FROM JOURNAL J
+		, SLIP S
+		WHERE J.CUSTOMER_CODE= #{customerCode}
+		AND J.SLIP_NO=S.SLIP_NO
+		AND J.ACCOUNT_INNER_CODE =  #{accountCode}
+		AND S.APPROVAL_DATE BETWEEN '2018-01-01' AND LAST_DAY(ADD_MONTHS(#{startDate},-1))
+		GROUP BY J.CUSTOMER_CODE 
+		, J.CUSTOMER_NAME
+		) 
+		, SEARCH_MONTH_INFO AS (
+		SELECT 
+		CASE WHEN g_id = 0 THEN SLIP_APPROVAL_DATE
+			 WHEN g_id = 14 THEN '월  계'
+			 WHEN g_id = 15 THEN '누  계' END AS SLIP_APPROVAL_DATE,
+		CASE WHEN g_id = 0 THEN CUSTOMER_CODE ELSE ' ' END AS CUSTOMER_CODE,
+		CASE WHEN g_id = 0 THEN CUSTOMER_NAME ELSE ' ' END AS CUSTOMER_NAME,
+		CASE WHEN g_id = 15 THEN L_price +
+		(SELECT CASE WHEN NOT EXISTS (SELECT * FROM LAST_MONTH_INFO) THEN 0 ELSE (SELECT L_price FROM LAST_MONTH_INFO) END FROM DUAL) 
+		ELSE L_price END AS L_price,
+		CASE WHEN g_id = 15 THEN R_price +
+		(SELECT CASE WHEN NOT EXISTS (SELECT * FROM LAST_MONTH_INFO) THEN 0 ELSE (SELECT R_price FROM LAST_MONTH_INFO) END FROM DUAL) 
+		ELSE R_price  END AS R_price,
+		CASE WHEN g_id = 0 THEN 
+		SUM( CASE WHEN g_id = 0 THEN NVL(L_price,0) END - CASE WHEN g_id = 0 THEN NVL(R_price,0)  END ) 
+		OVER(ORDER BY  SLIP_APPROVAL_DATE_MONTH ASC ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) 
+		WHEN  g_id = 15  THEN NVL(L_price,0)- NVL(R_price,0) + (SELECT CASE WHEN NOT EXISTS (SELECT * FROM LAST_MONTH_INFO) 
+		THEN 0 ELSE (SELECT balance FROM LAST_MONTH_INFO) END FROM DUAL) ELSE 0 END AS balance 
+		FROM
+		(SELECT j.SLIP_APPROVAL_DATE AS SLIP_APPROVAL_DATE,
+		SUBSTR(j.SLIP_APPROVAL_DATE,0,7) AS SLIP_APPROVAL_DATE_MONTH,
+		J.CUSTOMER_CODE AS CUSTOMER_CODE, 
+		J.CUSTOMER_NAME AS CUSTOMER_NAME,
+		NVL(SUM(J.LEFT_DEBTOR_PRICE),0) AS L_price,
+		NVL(SUM(J.RIGHT_CREDITS_PRICE),0) AS R_price,
+		GROUPING_ID(j.SLIP_APPROVAL_DATE,J.CUSTOMER_CODE , J.CUSTOMER_NAME,SUBSTR(j.SLIP_APPROVAL_DATE,0,7)) AS g_id
+		FROM JOURNAL J, SLIP S
+		WHERE J.CUSTOMER_CODE= #{customerCode}
+		AND J.SLIP_NO=S.SLIP_NO
+		AND J.ACCOUNT_INNER_CODE =  #{accountCode}
+		AND S.APPROVAL_DATE  BETWEEN #{startDate} AND #{endDate}
+		GROUP BY GROUPING SETS 
+		((j.SLIP_APPROVAL_DATE,J.CUSTOMER_CODE , J.CUSTOMER_NAME,SUBSTR(j.SLIP_APPROVAL_DATE,0,7)),(SUBSTR(j.SLIP_APPROVAL_DATE,0,7)),())
+		ORDER BY SLIP_APPROVAL_DATE_MONTH)
+		)   
+		
+		SELECT '전월이월' AS SLIP_APPROVAL_DATE
+		, J.CUSTOMER_CODE
+		, J.CUSTOMER_NAME
+		, NVL(SUM(J.LEFT_DEBTOR_PRICE),0) AS L_price
+		, NVL(SUM(J.RIGHT_CREDITS_PRICE),0) AS R_price
+		, (NVL(SUM(J.LEFT_DEBTOR_PRICE),0)-NVL(SUM(J.RIGHT_CREDITS_PRICE),0)) AS balance
+		FROM JOURNAL J
+		, SLIP S
+		WHERE J.CUSTOMER_CODE= #{customerCode}
+		AND J.SLIP_NO=S.SLIP_NO
+		AND J.ACCOUNT_INNER_CODE =  #{accountCode}
+		AND S.APPROVAL_DATE BETWEEN '2018-01-01' AND LAST_DAY(ADD_MONTHS(#{startDate},-1))
+		GROUP BY J.CUSTOMER_CODE 
+		, J.CUSTOMER_NAME
+		                    
+		UNION all       
+		 
+		SELECT * FROM SEARCH_MONTH_INFO   
+	</select>	
+ 
+</mapper>

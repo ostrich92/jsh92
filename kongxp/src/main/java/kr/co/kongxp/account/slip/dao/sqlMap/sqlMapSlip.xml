@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper  namespace="kr.co.kongxp.account.slip.dao.SlipDAO">
+    
+    <resultMap type="slipTo" id="slipResult">
+    	<result property="slipNo" column="SLIP_NO"/>
+    	<result property="accountPeriodNo" column="ACCOUNT_PERIOD_NO"/>
+    	<result property="deptCode" column="DEPT_CODE"/>
+    	<result property="slipType" column="SLIP_TYPE"/>
+    	<result property="expenseReport" column="EXPENSE_REPORT"/>
+    	<result property="authorizationStatus" column="AUTHORIZATION_STATUS"/>
+    	<result property="reportingEmpCode" column="REPORTING_EMP_CODE"/>
+    	<result property="reportingDate" column="REPORTING_DATE"/>
+    	<result property="reportingTime" column="REPORTING_TIME"/>
+    	<result property="approvalEmpCode" column="APPROVAL_EMP_CODE"/>
+    	<result property="approvalDate" column="APPROVAL_DATE"/>
+    	<result property="approvalTime" column="APPROVAL_TIME"/>
+    	<result property="modifyingEmpCode" column="MODIFYING_EMP_CODE"/>
+    	<result property="modifyingDate" column="MODIFYING_DATE"/>
+    	<result property="modifyingTime" column="MODIFYING_TIME"/>
+    	<result property="accountDifference" column="ACCOUNT_DIFFERENCE"/>
+    	<result property="slipDescription" column="SLIP_DESCRIPTION"/>
+    	<result property="slipStatus" column="SLIP_STATUS"/>
+<!-- 	<result property="journalToList" select="journal.getJournalListForSlip" column="SLIP_NO"/> -->
+   	</resultMap>
+
+    	<select id="getSlipList" parameterType="map" resultMap="slipResult">
+    		SELECT * 
+    		FROM SLIP 
+    		WHERE (APPROVAL_DATE  BETWEEN #{startDate} AND #{endDate} or REPORTING_DATE BETWEEN #{startDate} AND #{endDate})
+            	AND SLIP_STATUS=#{slipStatus}
+    	</select >
+    	
+    	<select id="getSlipTotalList" parameterType="map" resultMap="slipResult">
+    		SELECT * FROM SLIP
+    		WHERE (APPROVAL_DATE  BETWEEN #{startDate} AND #{endDate} or REPORTING_DATE BETWEEN #{startDate} AND #{endDate})
+    	</select>
+
+		<select id="getSlipRowCount" resultMap="slipResult">
+    		SELECT * 
+    		FROM SLIP 
+    		WHERE REPORTING_DATE = #{reportingDate}
+    	</select>
+
+ 		<insert id="insertSlipInfo" parameterType="slipTo">
+			INSERT INTO SLIP(
+			SLIP_NO
+			, SLIP_TYPE
+			, REPORTING_DATE
+			, EXPENSE_REPORT
+			, APPROVAL_EMP_CODE
+			, REPORTING_EMP_CODE
+			, SLIP_STATUS
+			, DEPT_CODE
+			, APPROVAL_DATE
+			) VALUES (
+			#{slipNo}
+			, #{slipType}
+			, #{reportingDate}
+			, #{expenseReport}
+			, #{approvalEmpCode}
+			, #{reportingEmpCode}
+			, #{slipStatus}
+			, #{deptCode}
+			, #{approvalDate}
+			)
+		</insert>
+
+		<delete id="deleteSlipInfo" parameterType="slipTo">
+			DELETE FROM SLIP 
+			WHERE SLIP_NO = #{slipNo}
+		</delete>
+
+		<update id="updateSlipInfo" parameterType="slipTo">
+			UPDATE SLIP SET
+				SLIP_NO				= #{slipNo},
+    			ACCOUNT_PERIOD_NO	= #{accountPeriodNo},
+    			DEPT_CODE			= #{deptCode},
+    			SLIP_TYPE			= #{slipType},
+    			EXPENSE_REPORT		= #{expenseReport},
+    			AUTHORIZATION_STATUS= #{authorizationStatus},
+    			REPORTING_EMP_CODE	= #{reportingEmpCode},
+    			REPORTING_DATE		= #{reportingDate},
+    			APPROVAL_EMP_CODE	= #{approvalEmpCode},
+    			APPROVAL_DATE		= #{approvalDate},
+    			SLIP_DESCRIPTION	= #{slipDescription},
+    			SLIP_STATUS			= #{slipStatus}
+    		WHERE SLIP_NO = #{slipNo}
+		</update>
+		
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper  namespace="kr.co.kongxp.base.dao.CodeDetailDAO">
+
+	<resultMap type="codeDetailTO" id="codeDetailResult">
+		<result property="divisionCodeNo" column="DIVISION_CODE_NO" />
+		<result property="detailCode" column="DETAIL_CODE" />
+		<result property="detailCodeName" column="DETAIL_CODE_NAME" />
+		<result property="codeUseCheck" column="CODE_USE_CHECK" />
+		<result property="description" column="DESCRIPTION" />
+	</resultMap>
+
+	<select id="selectCodeDetailList" resultMap="codeDetailResult">
+		SELECT * FROM CODE_DETAIL
+	</select>
+	
+	<select id="findCodeDetailList" parameterType="string"
+		resultMap="codeDetailResult">
+		SELECT * FROM CODE_DETAIL
+		WHERE DIVISION_CODE_NO = #{codeDetail}
+	</select>
+
+	<select id="selectDetailCodePartList" parameterType="string"
+		resultMap="codeDetailResult">
+		SELECT * FROM CODE_DETAIL 
+		where DIVISION_CODE_NO = #{divisionCode}
+	</select>
+
+	<insert id="insertCodeDetail" parameterType="codeDetailTO">
+		INSERT INTO	CODE_DETAIL(
+		DIVISION_CODE_NO
+		, DETAIL_CODE
+		, DETAIL_CODE_NAME
+		, CODE_USE_CHECK
+		, DESCRIPTION
+		)
+		VALUES(
+		#{divisionCodeNo}
+		, #{detailCode}
+		, #{detailCodeName}
+		, #{codeUseCheck}
+		, #{description}
+		)
+	</insert>
+
+	<update id="updateCodeDetail" parameterType="codeDetailTO">
+		UPDATE CODE_DETAIL
+		SET DETAIL_CODE = #{detailCode} 
+		, DETAIL_CODE_NAME = #{detailCodeName} 
+		, CODE_USE_CHECK = #{codeUseCheck}
+		, DESCRIPTION = #{description}
+		WHERE DIVISION_CODE_NO = #{divisionCodeNo}
+
+	</update>
+
+	<delete id="deleteCodeDetail" parameterType="codeDetailTO">
+		DELETE FROM CODE_DETAIL
+		WHERE DETAIL_CODE = #{detailCode}
+	</delete>
+
+
+</mapper>

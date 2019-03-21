@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration> 
+<settings>
+      <setting value="true" name="callSettersOnNulls" />
+      <setting value="false" name="cacheEnabled" />
+      <setting value="true" name="useGeneratedKeys" />
+      <setting value="REUSE" name="defaultExecutorType" />
+      <setting value="VARCHAR" name="jdbcTypeForNull" />
+      <setting value="true" name="mapUnderscoreToCamelCase" />
+   </settings>
+   
+<typeAliases>
+<!-- Account -->
+	<typeAlias alias="accountTO" type="kr.co.kongxp.account.acBase.to.AccountTO"/>
+<!-- AccountSummary -->	
+	<typeAlias alias="accountSummaryTO" type="kr.co.kongxp.account.acBase.to.AccountSummaryTO"/>
+<!-- Customer -->
+	 <typeAlias alias="customerTO" type="kr.co.kongxp.account.acBase.to.CustomerTO"/>
+<!-- accountBoookManagement -->
+	<typeAlias alias="customerLedgerTO" type="kr.co.kongxp.account.accountBookManagement.to.CustomerLedgerTO"/>
+	<typeAlias alias="customerLedgerDetailTO" type="kr.co.kongxp.account.accountBookManagement.to.CustomerLedgerDetailTO"/>
+<!-- slip -->
+	<typeAlias alias="slipTO" type="kr.co.kongxp.account.slip.to.SlipTO"/>
+	<typeAlias alias="journalTO" type="kr.co.kongxp.account.slip.to.JournalTO"/>
+	<typeAlias alias="journalDetailTO" type="kr.co.kongxp.account.slip.to.JournalDetailTO"/>
+	<typeAlias alias="accountControlDetailTO" type="kr.co.kongxp.account.slip.to.AccountControlDetailTO"/>
+<!-- earlyFinancialStatement -->
+  	<typeAlias alias="earlyAssetsCountTO" type="kr.co.kongxp.account.statement.to.EarlyAssetsCountTO"/>
+	<typeAlias alias="earlyLiabilitiesAndCapitalCountTO" type="kr.co.kongxp.account.statement.to.EarlyLiabilitiesAndCapitalCountTO"/>
+	<typeAlias alias="earlyFinancialStatementsTO" type="kr.co.kongxp.account.statement.to.EarlyFinancialStatementsTO"/>
+<!-- earlyIncomestatement -->	
+	<typeAlias alias="earlyrevenuesAndExpenseTO" type="kr.co.kongxp.account.statement.to.EarlyrevenuesAndExpenseTO"/>
+	<typeAlias alias="earlyIncomeStatementTO" type="kr.co.kongxp.account.statement.to.EarlyIncomeStatementTO"/>
+<!-- financialStatements -->	
+	<typeAlias alias="financialStatementsTO" type="kr.co.kongxp.account.statement.to.FinancialStatementsTO"/>
+	<typeAlias alias="eFinancialStatementsTO" type="kr.co.kongxp.account.statement.to.eFinancialStatementsTO"/>
+<!-- IncomeStatement -->	
+	<typeAlias alias="incomeStatementTO" type="kr.co.kongxp.account.statement.to.IncomeStatementTO"/>
+<!-- TotalTrialBalance -->	
+	<typeAlias alias="totalTrialBalanceTO" type="kr.co.kongxp.account.statement.to.TotalTrialBalanceTO"/>
+<!-- code -->	
+	<typeAlias alias="codeTO" type="kr.co.kongxp.base.to.CodeTO" />
+<!-- codeDetail -->	
+	<typeAlias alias="codeDetailTO" type="kr.co.kongxp.base.to.CodeDetailTO" />
+<!-- menu -->	
+	<typeAlias alias="userMenuTO" type="kr.co.kongxp.base.to.UserMenuTO" />
+<!-- Login -->	
+	<typeAlias alias="empTO" type="kr.co.kongxp.hr.emp.to.EmpTO"/>
+</typeAliases>
+
+</configuration> 

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper  namespace="kr.co.kongxp.hr.emp.dao.EmployeeDAO">
+	
+	<resultMap type="empTO" id="employeeResult">
+		<result property="empName" column="EMP_NAME"/>
+		<result property="empCode" column="EMP_CODE"/>
+		<result property="companyCode" column="COMPANY_CODE"/>
+		<result property="workplaceCode" column="WORKPLACE_CODE"/>
+		<result property="deptCode" column="DEPT_CODE"/>
+		<result property="positionCode" column="POSITION_CODE"/>
+		<result property="socialSecurityNumber" column="SOCIAL_SECURITY_NUMBER"/>
+		<result property="birthDate" column="BIRTH_DATE"/>
+		<result property="gender" column="GENDER"/>
+		<result property="eMail" column="EMAIL"/>
+		<result property="phoneNumber" column="PHONE_NUMBER"/>
+		<result property="image" column="IMAGE"/>
+		<result property="userPw" column="USER_PW"/>
+		<result property="zipCode" column="ZIP_CODE"/>
+		<result property="basicAddress" column="BASIC_ADDRESS"/>
+		<result property="detailAddress" column="DETAIL_ADDRESS"/>
+		<result property="levelOfEducation" column="LEVEL_OF_EDUCATION"/>
+		<result property="userOrNot" column="USER_OR_NOT"/>
+		<result property="deptName" column="DEPT_NAME"/>
+		<result property="positionName" column="POSITION_NAME"/>
+	</resultMap>
+
+<!-- 	<cacheModel id="empCache" type="FIFO" readOnly="true" serialize="false">
+   		<flushInterval hours="24"/>
+   		<flushOnExecute  statement="employee.deleteEmployee"/>
+   		<flushOnExecute  statement="employee.insertEmployee"/>
+   		<flushOnExecute  statement="employee.updateEmployee"/>
+   		<property name="size" value="10"/>
+	</cacheModel> -->
+
+	 <select id="selectEmp" resultMap="employeeResult" parameterType="string">
+    	<![CDATA[
+    	SELECT *
+    	FROM EMPLOYEE
+    	WHERE EMP_CODE=#{empCode}
+    	]]>
+     </select>
+
+<!--
+	<select id="selectEmployeeList" resultMap="employeeResult" parameterClass="string">
+		<![CDATA[
+			SELECT
+				*
+			FROM EMPLOYEE
+			WHERE DEPT_CODE = #{deptCode}
+		]]>
+	</select>
+
+
+	<update id="updateEmployeeInfo" parameterClass="EmployeeBean">
+	<![CDATA[
+
+	UPDATE EMPLOYEE SET
+	GENDER=#{gender},
+	PHONE_NUMBER=#{phoneNumber},ZIP_CODE=#{zipCode},BASIC_ADDRESS=#{basicAddress},
+	DETAIL_ADDRESS=#{detailAddress},EMAIL=#{eMail},IMAGE=#{image},
+	SOCIAL_SECURITY_NUMBER=#{socialSecurityNumber}
+	WHERE EMP_CODE=#{empCode}
+
+
+	]]>
+
+	</update>
+
+	<update id="updateEmployee" parameterClass="employeeBean">
+        <![CDATA[
+			UPDATE EMPLOYEE
+			SET DEPT_CODE=#{deptCode},
+			POSITION_CODE=#{positionCode}
+			WHERE EMP_CODE=#{empCode}
+       ]]>
+    </update>
+
+
+    <delete id="deleteEmployee" parameterClass="string">
+    <![CDATA[
+
+	DELETE FROM EMPLOYEE
+	WHERE EMP_CODE=#{empCode}
+
+    ]]>
+    </delete>
+
+	<insert id="insertEmployee" parameterClass="employeeBean">
+    <![CDATA[
+   		INSERT
+    	INTO
+    		EMPLOYEE (
+    			EMP_CODE,USER_PW,EMP_NAME,POSITION_CODE,DEPT_CODE,
+    			GENDER,SOCIAL_SECURITY_NUMBER,PHONE_NUMBER,
+    			EMAIL,BIRTH_DATE,ZIP_CODE,BASIC_ADDRESS,DETAIL_ADDRESS,IMAGE
+    			)
+    	VALUES(
+    			#{empCode},#{userPw},#{empName},#{positionCode},#{deptCode},
+    			#{gender},#{socialSecurityNumber},#{phoneNumber},
+    			#{eMail},#{birthDate},#{zipCode},#{basicAddress},#{detailAddress},#{image}
+    		)
+    ]]>
+    </insert>
+
+
+
+ -->
+</mapper>

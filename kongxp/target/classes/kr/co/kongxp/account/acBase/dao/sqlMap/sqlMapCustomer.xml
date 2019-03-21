@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper  namespace="kr.co.kongxp.account.acBase.dao.CustomerDAO">
+  	
+  	 <resultMap type="customerTO" id="customerResult">
+	     <result property="customerCode" column="CUSTOMER_CODE"/> 
+	     <result property="workplaceCode" column="WORKPLACE_CODE"/> 
+	     <result property="customerName" column="CUSTOMER_NAME"/> 
+	     <result property="customerType" column="CUSTOMER_TYPE"/> 
+	     <result property="customerCEO" column="CUSTOMER_CEO"/> 
+	     <result property="businessLicenseNumber" column="BUSINESS_LICENSE_NUMBER"/> 
+	     <result property="socialSecurityNumber" column="SOCIAL_SECURITY_NUMBER"/> 
+	     <result property="customerBusinessConditions" column="CUSTOMER_BUSINESS_CONDITIONS"/> 
+	     <result property="customerBusinessItems" column="CUSTOMER_BUSINESS_ITEMS"/> 
+	     <result property="customerZipCode" column="CUSTOMER_ZIP_CODE"/> 
+	     <result property="customerBasicAddress" column="CUSTOMER_BASIC_ADDRESS"/> 
+	     <result property="customerDetailAddress" column="CUSTOMER_DETAIL_ADDRESS"/> 
+	     <result property="customerTelNumber" column="CUSTOMER_TEL_NUMBER"/> 
+	     <result property="customerFaxNumber" column="CUSTOMER_FAX_NUMBER"/> 
+	     <result property="customerNote" column="CUSTOMER_NOTE"/> 
+	     <result property="accountNumber" column="ACCOUNT_NUMBER"/> 
+	     <result property="cardNumber" column="CARD_NUMBER"/> 
+	     <result property="cardType" column="CARD_TYPE"/> 
+	     <result property="cardMemberName" column="CARD_MEMBER_NAME"/> 
+	     <result property="cardOpenPlace" column="CARD_OPEN_PLACE"/> 
+	     <result property="financialInstituteCode" column="FINANCIAL_INSTITUTE_CODE"/> 
+	     <result property="financialInstituteName" column="FINANCIAL_INSTITUTE_NAME"/> 
+	</resultMap>
+
+	<select id="selectGeneralCustomerList" resultMap="customerResult">
+		select  *  from CUSTOMER order by CUSTOMER_CODE
+	</select>
+	
+
+	<insert id="insertCustomer" parameterType="customerTO">
+		Insert into CUSTOMER (
+		CUSTOMER_CODE
+		, WORKPLACE_CODE
+		, CUSTOMER_NAME
+		, CUSTOMER_TYPE
+		, CUSTOMER_CEO
+		, BUSINESS_LICENSE_NUMBER
+		, SOCIAL_SECURITY_NUMBER
+		, CUSTOMER_BUSINESS_CONDITIONS
+		, CUSTOMER_BUSINESS_ITEMS
+		, CUSTOMER_ZIP_CODE
+		, CUSTOMER_BASIC_ADDRESS
+		, CUSTOMER_DETAIL_ADDRESS
+		, CUSTOMER_TEL_NUMBER
+		, CUSTOMER_FAX_NUMBER
+		, CUSTOMER_NOTE
+		, ACCOUNT_NUMBER
+		, CARD_NUMBER
+		, CARD_TYPE
+		, CARD_MEMBER_NAME
+		, CARD_OPEN_PLACE
+		, FINANCIAL_INSTITUTE_CODE
+		, FINANCIAL_INSTITUTE_NAME
+		) VALUES (
+		#{customerCode}
+		, #{workplaceCode}
+		, #{customerName}
+		, #{customerType} 
+		, #{customerCEO}
+		, #{businessLicenseNumber}
+		, #{socialSecurityNumber}
+		, #{customerBusinessConditions}
+		, #{customerBusinessItems}
+		, #{customerZipCode}
+		, #{customerBasicAddress}
+		, #{customerDetailAddress}
+		, #{customerTelNumber}
+		, #{customerFaxNumber}
+		, #{customerNote}
+		, #{accountNumber}
+		, #{cardNumber}
+		, #{cardType}
+		, #{cardMemberName}
+		, #{cardOpenPlace}
+		, #{financialInstituteCode}
+		, #{financialInstituteName}
+		)
+	</insert>
+
+	<update id="updateCustomer" parameterType="customerTO">
+  	  	UPDATE CUSTOMER SET
+		BUSINESS_LICENSE_NUMBER = #{businessLicenseNumber}
+		, ACCOUNT_NUMBER = #{accountNumber}
+		, CARD_NUMBER = #{cardNumber}
+		WHERE CUSTOMER_CODE = #{customerCode}
+	</update>
+
+	<delete id="deleteCustomer" parameterType="customerTO">
+    	DELETE FROM CUSTOMER 
+    	WHERE CUSTOMER_CODE = #{customerCode} 
+	</delete>
+    
+</mapper>
